@@ -1,0 +1,120 @@
+## Fund & Investment Analytics ##
+# Find Top-Performing Funds by ROI
+
+SELECT Fund_Name, AVG(ROI) AS Avg_ROI
+FROM transactions t
+JOIN funds f ON t.Fund_ID = f.Fund_ID
+GROUP BY Fund_Name
+ORDER BY Avg_ROI DESC;
+
+
+
+# Investor Portfolio Analysis
+
+SELECT i.Investor_Name, COUNT(t.Transaction_ID) AS Total_Investments, 
+       SUM(t.Amount_Invested) AS Total_Amount, AVG(t.ROI) AS Avg_ROI
+FROM transactions t
+JOIN investors i ON t.Investor_ID = i.Investor_ID
+GROUP BY i.Investor_Name
+ORDER BY Total_Amount DESC;
+
+
+
+# Fund Category-Wise Returns
+
+SELECT f.Category, AVG(p.Annual_Returns) AS Avg_Return
+FROM performance p
+JOIN funds f ON p.Fund_ID = f.Fund_ID
+GROUP BY f.Category
+ORDER BY Avg_Return DESC;
+
+
+
+# Monthly Investment Trend
+
+SELECT DATE_FORMAT(Transaction_Date, '%Y-%m') AS Month, 
+       SUM(Amount_Invested) AS Total_Investment
+FROM transactions
+GROUP BY Month
+ORDER BY Month ASC;
+
+
+
+
+# Top 5 Funds with Highest Investment Amount
+
+SELECT f.Fund_Name, SUM(t.Amount_Invested) AS Total_Investment
+FROM transactions t
+JOIN funds f ON t.Fund_ID = f.Fund_ID
+GROUP BY f.Fund_Name
+ORDER BY Total_Investment DESC
+LIMIT 5;
+
+
+
+# Most Active Investors (Based on Number of Investments)
+
+SELECT i.Investor_Name, COUNT(t.Transaction_ID) AS Investment_Count
+FROM transactions t
+JOIN investors i ON t.Investor_ID = i.Investor_ID
+GROUP BY i.Investor_Name
+ORDER BY Investment_Count DESC
+LIMIT 5;
+
+
+
+# Yearly Investment Growth Analysis
+
+SELECT EXTRACT(YEAR FROM Transaction_Date) AS Year, 
+       SUM(Amount_Invested) AS Total_Investment, 
+       ROUND(AVG(ROI), 2) AS Avg_ROI
+FROM transactions
+GROUP BY Year
+ORDER BY Year;
+
+
+
+
+# High-Risk Fund Performance
+
+SELECT f.Fund_Name, f.Risk_Level, 
+       AVG(t.ROI) AS Avg_ROI, SUM(t.Amount_Invested) AS Total_Investment
+FROM transactions t
+JOIN funds f ON t.Fund_ID = f.Fund_ID
+WHERE f.Risk_Level = 'High'
+GROUP BY f.Fund_Name
+ORDER BY Avg_ROI DESC;
+
+
+
+# Average Investment by Investor Type
+
+SELECT i.Investment_Type, ROUND(AVG(t.Amount_Invested), 2) AS Avg_Investment
+FROM transactions t
+JOIN investors i ON t.Investor_ID = i.Investor_ID
+GROUP BY i.Investment_Type;
+
+
+
+# Funds with Best Return-to-Expense Ratio
+
+SELECT f.Fund_Name, p.Annual_Returns, p.Expense_Ratio, 
+       ROUND(p.Annual_Returns / p.Expense_Ratio, 2) AS Return_to_Expense
+FROM performance p
+JOIN funds f ON p.Fund_ID = f.Fund_ID
+ORDER BY Return_to_Expense DESC
+LIMIT 5;
+
+
+
+# Investment Category-wise Distribution
+
+SELECT f.Category, COUNT(t.Transaction_ID) AS Total_Transactions, 
+       SUM(t.Amount_Invested) AS Total_Investment
+FROM transactions t
+JOIN funds f ON t.Fund_ID = f.Fund_ID
+GROUP BY f.Category
+ORDER BY Total_Investment DESC;
+
+-------------------------------------------------------------------------------------------------------------------------
+
